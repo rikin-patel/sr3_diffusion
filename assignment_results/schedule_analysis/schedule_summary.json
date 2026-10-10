@@ -1,0 +1,44 @@
+{
+  "theta_definition": "theta_t = alpha_bar_t = prod_{s<=t} (1 - beta_s)",
+  "x": 2.5,
+  "T": 2000,
+  "beta_schedule": {
+    "type": "linear",
+    "start": 1e-06,
+    "end": 0.01
+  },
+  "theta_native_float64": {
+    "min": 4.3859782361332086e-05,
+    "argmin_t": 2000,
+    "max": 0.999999,
+    "argmax_t": 1,
+    "strictly_in_open_unit_interval": true,
+    "strictly_decreasing": true
+  },
+  "theta_power_float64": {
+    "min": 1.2739904743536562e-11,
+    "argmin_t": 2000,
+    "max": 0.9999975000018749,
+    "argmax_t": 1,
+    "strictly_in_open_unit_interval": true,
+    "strictly_decreasing": true
+  },
+  "theta_power_float32_min": 1.273990461736485e-11,
+  "implied_beta_native": {
+    "min": 1e-06,
+    "max": 0.01
+  },
+  "implied_beta_power": {
+    "min": 2.499998125071734e-06,
+    "max": 0.024812812891801705
+  },
+  "model_code_matches_reference": {
+    "native": true,
+    "power": true
+  },
+  "pretrained_checkpoint": {
+    "path": "pretrained/sr3_16_128/I640000_E37_gen.pth",
+    "alphas_cumprod_equals_native_schedule": true,
+    "betas_equal_linear_schedule": true
+  }
+}

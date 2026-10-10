@@ -8,6 +8,7 @@ import core.metrics as Metrics
 from core.wandb_logger import WandbLogger
 from tensorboardX import SummaryWriter
 import os
+import random  #ADDED
 import numpy as np
 
 if __name__ == "__main__":
@@ -27,6 +28,14 @@ if __name__ == "__main__":
     opt = Logger.parse(args)
     # Convert to NoneDict, which return None for missing key.
     opt = Logger.dict_to_nonedict(opt)
+
+    # Same seed for Run A and Run B: identical data order and noise draws.  #ADDED
+    seed = opt['train']['seed'] if opt['train'] else None  #ADDED
+    if seed is not None:  #ADDED
+        random.seed(seed)  #ADDED
+        np.random.seed(seed)  #ADDED
+        torch.manual_seed(seed)  #ADDED
+        torch.cuda.manual_seed_all(seed)  #ADDED
 
     # logging
     torch.backends.cudnn.enabled = True
@@ -97,7 +106,8 @@ if __name__ == "__main__":
                     logger.info(message)
 
                     if wandb_logger:
-                        wandb_logger.log_metrics(logs)
+                        wandb_logger.log_metrics(
+                            dict(logs, iteration=current_step, epoch_running=current_epoch))  #MODIFIED
 
                 # validation
                 if current_step % opt['train']['val_freq'] == 0:
@@ -109,53 +119,69 @@ if __name__ == "__main__":
 
                     diffusion.set_new_noise_schedule(
                         opt['model']['beta_schedule']['val'], schedule_phase='val')
+                    avg_ssim = 0.0  #ADDED
+                    # Validation sampling uses its own fixed seed so every validation  #ADDED
+                    # pass (and both runs) starts from the same noise; the training  #ADDED
+                    # RNG stream is restored afterwards.  #ADDED
+                    rng_state = (torch.get_rng_state(), torch.cuda.get_rng_state_all())  #ADDED
+                    if seed is not None:  #ADDED
+                        torch.manual_seed(seed)  #ADDED
+                        torch.cuda.manual_seed_all(seed)  #ADDED
                     for _,  val_data in enumerate(val_loader):
-                        idx += 1
                         diffusion.feed_data(val_data)
                         diffusion.test(continous=False)
                         visuals = diffusion.get_current_visuals()
-                        sr_img = Metrics.tensor2img(visuals['SR'])  # uint8
-                        hr_img = Metrics.tensor2img(visuals['HR'])  # uint8
-                        lr_img = Metrics.tensor2img(visuals['LR'])  # uint8
-                        fake_img = Metrics.tensor2img(visuals['INF'])  # uint8
+                        for b in range(visuals['HR'].shape[0]):  #ADDED: validation batches may hold several images
+                            idx += 1
+                            sr_img = Metrics.tensor2img(visuals['SR'][b])  # uint8  #MODIFIED
+                            hr_img = Metrics.tensor2img(visuals['HR'][b])  # uint8  #MODIFIED
+                            lr_img = Metrics.tensor2img(visuals['LR'][b])  # uint8  #MODIFIED
+                            fake_img = Metrics.tensor2img(visuals['INF'][b])  # uint8  #MODIFIED
 
-                        # generation
-                        Metrics.save_img(
-                            hr_img, '{}/{}_{}_hr.png'.format(result_path, current_step, idx))
-                        Metrics.save_img(
-                            sr_img, '{}/{}_{}_sr.png'.format(result_path, current_step, idx))
-                        Metrics.save_img(
-                            lr_img, '{}/{}_{}_lr.png'.format(result_path, current_step, idx))
-                        Metrics.save_img(
-                            fake_img, '{}/{}_{}_inf.png'.format(result_path, current_step, idx))
-                        tb_logger.add_image(
-                            'Iter_{}'.format(current_step),
-                            np.transpose(np.concatenate(
-                                (fake_img, sr_img, hr_img), axis=1), [2, 0, 1]),
-                            idx)
-                        avg_psnr += Metrics.calculate_psnr(
-                            sr_img, hr_img)
+                            # generation
+                            Metrics.save_img(
+                                hr_img, '{}/{}_{}_hr.png'.format(result_path, current_step, idx))
+                            Metrics.save_img(
+                                sr_img, '{}/{}_{}_sr.png'.format(result_path, current_step, idx))
+                            Metrics.save_img(
+                                lr_img, '{}/{}_{}_lr.png'.format(result_path, current_step, idx))
+                            Metrics.save_img(
+                                fake_img, '{}/{}_{}_inf.png'.format(result_path, current_step, idx))
+                            tb_logger.add_image(
+                                'Iter_{}'.format(current_step),
+                                np.transpose(np.concatenate(
+                                    (fake_img, sr_img, hr_img), axis=1), [2, 0, 1]),
+                                idx)
+                            avg_psnr += Metrics.calculate_psnr(
+                                sr_img, hr_img)
+                            avg_ssim += Metrics.calculate_ssim(sr_img, hr_img)  #ADDED
 
-                        if wandb_logger:
-                            wandb_logger.log_image(
-                                f'validation_{idx}', 
-                                np.concatenate((fake_img, sr_img, hr_img), axis=1)
-                            )
+                            if wandb_logger and idx <= 4:  #MODIFIED: only the first few panels go to W&B
+                                wandb_logger.log_image(
+                                    f'validation_{idx}',
+                                    np.concatenate((fake_img, sr_img, hr_img), axis=1)
+                                )
+                    torch.set_rng_state(rng_state[0])  #ADDED
+                    torch.cuda.set_rng_state_all(rng_state[1])  #ADDED
 
                     avg_psnr = avg_psnr / idx
+                    avg_ssim = avg_ssim / idx  #ADDED
                     diffusion.set_new_noise_schedule(
                         opt['model']['beta_schedule']['train'], schedule_phase='train')
                     # log
-                    logger.info('# Validation # PSNR: {:.4e}'.format(avg_psnr))
+                    logger.info('# Validation # PSNR: {:.4e} SSIM: {:.4e}'.format(avg_psnr, avg_ssim))  #MODIFIED
                     logger_val = logging.getLogger('val')  # validation logger
-                    logger_val.info('<epoch:{:3d}, iter:{:8,d}> psnr: {:.4e}'.format(
-                        current_epoch, current_step, avg_psnr))
+                    logger_val.info('<epoch:{:3d}, iter:{:8,d}> psnr: {:.4e}, ssim: {:.4e}'.format(
+                        current_epoch, current_step, avg_psnr, avg_ssim))  #MODIFIED
                     # tensorboard logger
                     tb_logger.add_scalar('psnr', avg_psnr, current_step)
+                    tb_logger.add_scalar('ssim', avg_ssim, current_step)  #ADDED
 
                     if wandb_logger:
                         wandb_logger.log_metrics({
                             'validation/val_psnr': avg_psnr,
+                            'validation/val_ssim': avg_ssim,  #ADDED
+                            'validation/iteration': current_step,  #ADDED
                             'validation/val_step': val_step
                         })
                         val_step += 1

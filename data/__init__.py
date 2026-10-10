@@ -14,8 +14,10 @@ def create_dataloader(dataset, dataset_opt, phase):
             num_workers=dataset_opt['num_workers'],
             pin_memory=True)
     elif phase == 'val':
+        # batch size was fixed to 1; configurable so validation can sample in one batch  #MODIFIED
         return torch.utils.data.DataLoader(
-            dataset, batch_size=1, shuffle=False, num_workers=1, pin_memory=True)
+            dataset, batch_size=dataset_opt.get('batch_size') or 1,  #MODIFIED
+            shuffle=False, num_workers=1, pin_memory=True)
     else:
         raise NotImplementedError(
             'Dataloader [{:s}] is not found.'.format(phase))

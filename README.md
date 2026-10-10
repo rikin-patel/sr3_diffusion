@@ -1,5 +1,172 @@
 # Image Super-Resolution via Iterative Refinement
 
+<!-- #ADDED: FMGAI assignment section (everything up to the "Original README" marker) -->
+
+## FMGAI assignment: SR3 on Kvasir-SEG under a power-transformed noise schedule
+
+This fork is used for the *Foundation Models and Generative AI* assignment. A pretrained SR3 model
+(16×16 → 128×128, trained on faces) is applied to and fine-tuned on Kvasir-SEG endoscopy images under two
+noise schedules.
+
+| Run | Branch | Weights | Schedule θ<sub>t</sub> | Config |
+| --- | --- | --- | --- | --- |
+| Run 0 | `feature/run-0-baseline` | pretrained, no fine-tuning | ᾱ<sub>t</sub> (native) | `config/kvasir_run0_baseline.json` |
+| Run A | `feature/run-a-original-schedule` | fine-tuned 20,000 iterations | ᾱ<sub>t</sub> (native) | `config/kvasir_runA_original.json` |
+| Run B | `feature/run-b-power-schedule` | fine-tuned 20,000 iterations | ᾱ<sub>t</sub><sup>2.50</sup> | `config/kvasir_runB_power.json` |
+
+The shared code lives on `feature/phase1-setup`. The run branches are stacked on top of it in the order
+Run 0 → Run A → Run B, so `feature/run-b-power-schedule` contains everything.
+
+The Phase 1 declaration is at `assignment_results/declaration/Phase1_Declaration.pdf`.
+
+### Where things are
+
+| Path | Contents |
+| --- | --- |
+| `kvasir_data/` | Dataset: raw download, split lists, prepared images (see `kvasir_data/README.md`) |
+| `pretrained/sr3_16_128/` | Pretrained checkpoint (not in git) |
+| `assignment/` | Scripts added for the assignment |
+| `assignment_results/declaration/` | Phase 1 declaration PDF |
+| `assignment_results/schedule_analysis/` | Schedule values, bound checks and figure |
+| `assignment_results/test_inputs/` | The 100 test images: ground truth, 16×16 input, bicubic upsampling |
+| `assignment_results/run_0_baseline/` | Run 0 outputs, metrics, trajectories, log |
+| `assignment_results/run_a_original_schedule/` | Run A fine-tuning logs and curves, outputs, metrics, trajectories |
+| `assignment_results/run_b_power_schedule/` | Run B fine-tuning logs and curves, outputs, metrics, trajectories |
+| `experiments/` | Raw training folders with checkpoints (not in git) |
+
+Inside each run folder: `test_outputs/sr/` (one PNG per test image), `panels/` (LR, bicubic, SR and ground
+truth side by side), `trajectories/` (reverse-process snapshots), `metrics_per_image.csv`,
+`metrics_summary.json`, `eval_config.json` and `logs/`. The fine-tuned runs also have `train_loss.csv`,
+`validation_metrics.csv`, `training_curves.png`, `validation_progress.png` and `tb_logger/`.
+
+### Code changes
+
+Every changed line in the original files carries a `#MODIFIED` comment and every new line an `#ADDED`
+comment. New files say `#ADDED: new file` on their first line.
+
+| File | Change |
+| --- | --- |
+| `model/sr3_modules/diffusion.py` | `theta_power` option: raises ᾱ<sub>t</sub> to the power x and re-derives β<sub>t</sub> and the posterior terms; batched sampling returns the whole batch |
+| `model/model.py` | Rebuilds the schedule from the config after loading a checkpoint (the checkpoint stores schedule buffers); `reset_optimizer` option to fine-tune from weights only; logs the active schedule |
+| `sr.py` | Random seed; validation on batches with a fixed sampling seed; SSIM during validation; iteration logged to W&B |
+| `core/logger.py` | Validation set size during training is configurable (`train.val_data_len`) |
+| `core/wandb_logger.py` | Run name, group and job type passed to W&B |
+| `data/__init__.py` | Validation batch size is configurable |
+| `assignment/*.py` | New: data preparation, schedule analysis, test evaluation, log collection, declaration PDF |
+
+### Step 0: environment
+
+Tested on Windows 11, Python 3.12, PyTorch 2.8 (CUDA), one RTX 5070 Ti Laptop GPU (12 GB). Commands are run
+from the repository root.
+
+```bash
+python -m venv .venv --system-site-packages
+```
+
+```bash
+.venv\Scripts\activate
+```
+
+```bash
+pip install -r requirement.txt
+```
+
+```bash
+wandb login
+```
+
+W&B logging is optional. Leave out `-enable_wandb` in the commands below to run without it.
+
+### Step 1: pretrained checkpoint
+
+Downloads `I640000_E37_gen.pth` and `I640000_E37_opt.pth` (the "16×16 -> 128×128 on FFHQ-CelebaHQ" row of the
+pretrained-model table further down).
+
+```bash
+python -m gdown --folder https://drive.google.com/drive/folders/12jh0K8XoM1FqpeByXvugHHAF3oAZ8KRu -O pretrained/sr3_16_128
+```
+
+### Step 2: dataset
+
+Download `kvasir-seg.zip` from <https://datasets.simula.no/kvasir-seg/> and unzip it into `kvasir_data/raw/`.
+Then build the fixed 800 / 100 / 100 split (seed 42) at 16 → 128:
+
+```bash
+python assignment/prepare_kvasir.py
+```
+
+### Step 3: schedule analysis and declaration
+
+```bash
+python assignment/schedule_analysis.py --x 2.50
+```
+
+```bash
+python assignment/build_declaration.py
+```
+
+### Step 4: Run 0, pretrained model without fine-tuning
+
+```bash
+git checkout feature/run-0-baseline
+```
+
+```bash
+python assignment/evaluate.py -c config/kvasir_run0_baseline.json --run_dir assignment_results/run_0_baseline -enable_wandb
+```
+
+### Step 5: Run A, fine-tuning with the native schedule
+
+```bash
+git checkout feature/run-a-original-schedule
+```
+
+```bash
+python sr.py -p train -c config/kvasir_runA_original.json -enable_wandb
+```
+
+```bash
+python assignment/collect_training_artifacts.py --name kvasir_runA_original --run_dir assignment_results/run_a_original_schedule
+```
+
+Evaluate the final checkpoint. Replace `<timestamp>` with the folder name printed by the previous command:
+
+```bash
+python assignment/evaluate.py -c config/kvasir_runA_original.json --checkpoint experiments/kvasir_runA_original_<timestamp>/checkpoint/I20000_E100 --run_dir assignment_results/run_a_original_schedule -enable_wandb
+```
+
+### Step 6: Run B, fine-tuning with the power-transformed schedule
+
+```bash
+git checkout feature/run-b-power-schedule
+```
+
+```bash
+python sr.py -p train -c config/kvasir_runB_power.json -enable_wandb
+```
+
+```bash
+python assignment/collect_training_artifacts.py --name kvasir_runB_power --run_dir assignment_results/run_b_power_schedule
+```
+
+```bash
+python assignment/evaluate.py -c config/kvasir_runB_power.json --checkpoint experiments/kvasir_runB_power_<timestamp>/checkpoint/I20000_E100 --run_dir assignment_results/run_b_power_schedule -enable_wandb
+```
+
+The two fine-tuning configs differ only in the experiment name and in `theta_power`. To check:
+
+```bash
+git diff --no-index config/kvasir_runA_original.json config/kvasir_runB_power.json
+```
+
+### Results
+
+Filled in on each run branch once the run has finished.
+
+---
+
+<!-- Original README of the SR3 implementation follows. -->
+
 [Paper](https://arxiv.org/pdf/2104.07636.pdf ) |  [Project](https://iterative-refinement.github.io/ )
 
 ## Brief

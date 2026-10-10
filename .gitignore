@@ -130,3 +130,13 @@ dmypy.json
 .pyre/
 
 *.lmdb
+
+# --- FMGAI assignment ---  #ADDED
+pretrained/
+*.pth
+kvasir_data/raw/*
+!kvasir_data/raw/.gitkeep
+kvasir_data/prepared/
+wandb/
+# fine-tuning and evaluation logs under assignment_results are part of the submission
+!assignment_results/**/*.log
