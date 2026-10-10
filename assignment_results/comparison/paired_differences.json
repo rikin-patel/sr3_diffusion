@@ -1,0 +1,80 @@
+{
+  "Run 0 -> Run A": {
+    "psnr": {
+      "mean_difference": 1.659216229228165,
+      "standard_error": 0.18357419564195382,
+      "t_statistic": 9.038395747430254,
+      "images_where_second_run_is_better": 83,
+      "n_images": 100,
+      "better_when": "higher"
+    },
+    "ssim": {
+      "mean_difference": 0.04134975061153642,
+      "standard_error": 0.004168474419829554,
+      "t_statistic": 9.9196364057878,
+      "images_where_second_run_is_better": 83,
+      "n_images": 100,
+      "better_when": "higher"
+    },
+    "lpips": {
+      "mean_difference": -0.10249652087688446,
+      "standard_error": 0.0043320882660255675,
+      "t_statistic": -23.659841301183576,
+      "images_where_second_run_is_better": 99,
+      "n_images": 100,
+      "better_when": "lower"
+    }
+  },
+  "Run 0 -> Run B": {
+    "psnr": {
+      "mean_difference": 0.9387956770718384,
+      "standard_error": 0.19722152689473257,
+      "t_statistic": 4.760107539238973,
+      "images_where_second_run_is_better": 70,
+      "n_images": 100,
+      "better_when": "higher"
+    },
+    "ssim": {
+      "mean_difference": 0.025729748690506905,
+      "standard_error": 0.0045082219620081795,
+      "t_statistic": 5.707294118909273,
+      "images_where_second_run_is_better": 75,
+      "n_images": 100,
+      "better_when": "higher"
+    },
+    "lpips": {
+      "mean_difference": -0.10161402761936188,
+      "standard_error": 0.004787034747912511,
+      "t_statistic": -21.22692501107765,
+      "images_where_second_run_is_better": 98,
+      "n_images": 100,
+      "better_when": "lower"
+    }
+  },
+  "Run A -> Run B": {
+    "psnr": {
+      "mean_difference": -0.7204205521563264,
+      "standard_error": 0.1481435367709681,
+      "t_statistic": -4.862990096355714,
+      "images_where_second_run_is_better": 15,
+      "n_images": 100,
+      "better_when": "higher"
+    },
+    "ssim": {
+      "mean_difference": -0.015620001921029518,
+      "standard_error": 0.004308532540206859,
+      "t_statistic": -3.6253647327169958,
+      "images_where_second_run_is_better": 25,
+      "n_images": 100,
+      "better_when": "higher"
+    },
+    "lpips": {
+      "mean_difference": 0.000882493257522583,
+      "standard_error": 0.0030670002678713035,
+      "t_statistic": 0.28773823946715543,
+      "images_where_second_run_is_better": 50,
+      "n_images": 100,
+      "better_when": "lower"
+    }
+  }
+}

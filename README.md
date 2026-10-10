@@ -32,6 +32,7 @@ The Phase 1 declaration is at `assignment_results/declaration/Phase1_Declaration
 | `assignment_results/run_0_baseline/` | Run 0 outputs, metrics, trajectories, log |
 | `assignment_results/run_a_original_schedule/` | Run A fine-tuning logs and curves, outputs, metrics, trajectories |
 | `assignment_results/run_b_power_schedule/` | Run B fine-tuning logs and curves, outputs, metrics, trajectories |
+| `assignment_results/comparison/` | Three-run summary table, paired differences, example grid |
 | `experiments/` | Raw training folders with checkpoints (not in git) |
 
 Inside each run folder: `test_outputs/sr/` (one PNG per test image), `panels/` (LR, bicubic, SR and ground
@@ -159,6 +160,14 @@ The two fine-tuning configs differ only in the experiment name and in `theta_pow
 git diff --no-index config/kvasir_runA_original.json config/kvasir_runB_power.json
 ```
 
+### Step 7: compare the three runs
+
+Writes the summary table, paired per-image differences and an example grid to `assignment_results/comparison/`.
+
+```bash
+python assignment/compare_runs.py
+```
+
 ### Results
 
 100 Kvasir-SEG test images, 2,000 sampling steps, same starting noise in every run. Mean ± standard
@@ -174,7 +183,23 @@ Run A was fine-tuned in `experiments/kvasir_runA_original_261010_160318` and eva
 `I20000_E100` checkpoint. Validation PSNR on 20 validation images moved between 22.8 and 24.1 dB over the ten
 validation passes and ended at 23.82 dB (see `assignment_results/run_a_original_schedule/validation_metrics.csv`).
 
-Run B is filled in on its branch once it has finished.
+| Run B: fine-tuned, power schedule ᾱ<sub>t</sub><sup>2.50</sup> | 23.43 ± 2.17 | 0.598 ± 0.096 | 0.171 ± 0.046 | [train](https://wandb.ai/rikin-patel-indian-institute-of-technology-jodhpur/FMGAI-Assn/runs/s9wk031l), [test](https://wandb.ai/rikin-patel-indian-institute-of-technology-jodhpur/FMGAI-Assn/runs/hb8yzh6v) |
+
+Run B was fine-tuned in `experiments/kvasir_runB_power_261010_194732` and evaluated from its `I20000_E100`
+checkpoint, sampling with the same ᾱ<sub>t</sub><sup>2.50</sup> schedule it was trained on. Validation PSNR
+moved between 22.7 and 24.2 dB and ended at 22.80 dB.
+
+Paired per-image differences, Run B minus Run A, on the 100 test images
+(`assignment_results/comparison/paired_differences.json`):
+
+| Metric | Mean difference | Standard error | Images where Run B is better |
+| --- | --- | --- | --- |
+| PSNR (dB) | −0.72 | 0.15 | 15 / 100 |
+| SSIM | −0.016 | 0.004 | 25 / 100 |
+| LPIPS | +0.001 | 0.003 | 50 / 100 |
+
+Both fine-tuned runs improve clearly on Run 0. Between them, the native schedule gives higher PSNR and SSIM,
+while LPIPS is the same within noise. Each run is a single training seed and a single sample per image.
 
 ---
 

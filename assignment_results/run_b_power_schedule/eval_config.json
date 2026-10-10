@@ -1,0 +1,15 @@
+{
+  "config": "config/kvasir_runB_power.json",
+  "checkpoint": "experiments/kvasir_runB_power_261010_194732/checkpoint/I20000_E100",
+  "split": "test",
+  "n_images": 100,
+  "batch_size": 25,
+  "seed": 42,
+  "sampling_steps": 2000,
+  "theta_power": 2.5,
+  "alpha_bar_1": 0.9999974966049194,
+  "alpha_bar_T": 1.273990461736485e-11,
+  "git_commit": "4cbd390f5c49a8037980ced1040a24d8a50e4ae1",
+  "torch": "2.8.0+cu129",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU"
+}
