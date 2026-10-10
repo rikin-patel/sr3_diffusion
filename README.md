@@ -168,8 +168,13 @@ deviation over the test set. Higher is better for PSNR and SSIM, lower is better
 | --- | --- | --- | --- | --- |
 | Bicubic upsampling (reference) | 23.21 ± 1.50 | 0.636 ± 0.086 | 0.560 ± 0.065 | |
 | Run 0: pretrained, no fine-tuning | 22.49 ± 1.89 | 0.572 ± 0.092 | 0.273 ± 0.061 | [run](https://wandb.ai/rikin-patel-indian-institute-of-technology-jodhpur/FMGAI-Assn/runs/zuwie16r) |
+| Run A: fine-tuned, native schedule ᾱ<sub>t</sub> | 24.15 ± 2.33 | 0.614 ± 0.098 | 0.170 ± 0.053 | [train](https://wandb.ai/rikin-patel-indian-institute-of-technology-jodhpur/FMGAI-Assn/runs/pa0ph10p), [test](https://wandb.ai/rikin-patel-indian-institute-of-technology-jodhpur/FMGAI-Assn/runs/p30ues96) |
 
-Run A and Run B are filled in on their branches once they have finished.
+Run A was fine-tuned in `experiments/kvasir_runA_original_261010_160318` and evaluated from its
+`I20000_E100` checkpoint. Validation PSNR on 20 validation images moved between 22.8 and 24.1 dB over the ten
+validation passes and ended at 23.82 dB (see `assignment_results/run_a_original_schedule/validation_metrics.csv`).
+
+Run B is filled in on its branch once it has finished.
 
 ---
 

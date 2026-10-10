@@ -1,0 +1,27 @@
+{
+  "experiment_dir": "experiments/kvasir_runA_original_261010_160318",
+  "checkpoints": [
+    "I10000_E50_gen.pth",
+    "I15000_E75_gen.pth",
+    "I20000_E100_gen.pth",
+    "I5000_E25_gen.pth"
+  ],
+  "logged_train_points": 200,
+  "validation_passes": 10,
+  "validation_progress_rows": [
+    "iteration 2000",
+    "iteration 4000",
+    "iteration 6000",
+    "iteration 8000",
+    "iteration 10000",
+    "iteration 12000",
+    "iteration 14000",
+    "iteration 16000",
+    "iteration 18000",
+    "iteration 20000",
+    "ground truth"
+  ],
+  "final_train_loss": 0.0077837,
+  "final_val_psnr": 23.823,
+  "final_val_ssim": 0.59107
+}

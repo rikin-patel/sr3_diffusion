@@ -1,0 +1,111 @@
+{
+    "name": "kvasir_runA_original",
+    "phase": "train", // Run A: fine-tune on Kvasir-SEG with the native schedule
+    "gpu_ids": [
+        0
+    ],
+    "path": {
+        "log": "logs",
+        "tb_logger": "tb_logger",
+        "results": "results",
+        "checkpoint": "checkpoint",
+        "resume_state": "pretrained/sr3_16_128/I640000_E37" // released 16x16 -> 128x128 FFHQ checkpoint
+    },
+    "datasets": {
+        "train": {
+            "name": "KvasirSEG_train",
+            "mode": "HR",
+            "dataroot": "kvasir_data/prepared/train_16_128",
+            "datatype": "img",
+            "l_resolution": 16,
+            "r_resolution": 128,
+            "batch_size": 4,
+            "num_workers": 0, // images are tiny PNGs; avoids respawning workers every epoch on Windows
+            "use_shuffle": true,
+            "data_len": -1
+        },
+        "val": {
+            "name": "KvasirSEG_val",
+            "mode": "LRHR",
+            "dataroot": "kvasir_data/prepared/val_16_128",
+            "datatype": "img",
+            "l_resolution": 16,
+            "r_resolution": 128,
+            "batch_size": 20,
+            "data_len": 20
+        },
+        "test": { // read by assignment/evaluate.py
+            "name": "KvasirSEG_test",
+            "mode": "LRHR",
+            "dataroot": "kvasir_data/prepared/test_16_128",
+            "datatype": "img",
+            "l_resolution": 16,
+            "r_resolution": 128,
+            "data_len": -1
+        }
+    },
+    "model": {
+        "which_model_G": "sr3",
+        "finetune_norm": false,
+        "unet": {
+            "in_channel": 6,
+            "out_channel": 3,
+            "inner_channel": 64,
+            "channel_multiplier": [
+                1,
+                2,
+                4,
+                8,
+                8
+            ],
+            "attn_res": [
+                16
+            ],
+            "res_blocks": 2,
+            "dropout": 0.2
+        },
+        "beta_schedule": { // theta_t = alpha_bar_t; theta_power is the exponent x applied to it
+            "train": {
+                "schedule": "linear",
+                "n_timestep": 2000,
+                "linear_start": 1e-6,
+                "linear_end": 1e-2,
+                "theta_power": 1.0
+            },
+            "val": {
+                "schedule": "linear",
+                "n_timestep": 2000,
+                "linear_start": 1e-6,
+                "linear_end": 1e-2,
+                "theta_power": 1.0
+            }
+        },
+        "diffusion": {
+            "image_size": 128,
+            "channels": 3,
+            "conditional": true
+        }
+    },
+    "train": { // identical in Run A and Run B
+        "n_iter": 20000,
+        "val_freq": 2000,
+        "save_checkpoint_freq": 5000,
+        "print_freq": 100,
+        "seed": 42,
+        "reset_optimizer": true,
+        "val_data_len": 20,
+        "optimizer": {
+            "type": "adam",
+            "lr": 1e-4
+        },
+        "ema_scheduler": { // not used now
+            "step_start_ema": 5000,
+            "update_ema_every": 1,
+            "ema_decay": 0.9999
+        }
+    },
+    "wandb": {
+        "project": "FMGAI-Assn",
+        "group": "sr3-kvasir-16-128"
+    }
+}

@@ -1,0 +1,27 @@
+{
+  "columns": [
+    "bicubic_input",
+    "x_t at t=2000",
+    "x_t at t=1800",
+    "x_t at t=1600",
+    "x_t at t=1400",
+    "x_t at t=1200",
+    "x_t at t=1000",
+    "x_t at t=800",
+    "x_t at t=600",
+    "x_t at t=400",
+    "x_t at t=200",
+    "x_t at t=0",
+    "ground_truth"
+  ],
+  "images": [
+    "cju0s690hkp960855tjuaqvv0",
+    "cju15ptjtppz40988odsm9azx",
+    "cju160wshltz10993i1gmqxbe",
+    "cju16d65tzw9d0799ouslsw25",
+    "cju16jgnyzp970878melv7r25",
+    "cju1819curo000988pd5xcqme",
+    "cju1871y11d6r0799k6cw4yze",
+    "cju1cqc7n4gpy0855jt246k68"
+  ]
+}
