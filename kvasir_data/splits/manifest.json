@@ -1,0 +1,20 @@
+{
+  "source_dir": "kvasir_data/raw/images",
+  "seed": 42,
+  "lr_size": 16,
+  "hr_size": 128,
+  "splits": {
+    "train": {
+      "count": 800,
+      "sha256_of_file_list": "cf3ab979ac8502568455a53824f707815fa177643b63a3f8cf1d07a61c2ad197"
+    },
+    "val": {
+      "count": 100,
+      "sha256_of_file_list": "2529ba9f2dca74a2cf4cec9e97edb45fe3b610297f00b4cf8551216472000a33"
+    },
+    "test": {
+      "count": 100,
+      "sha256_of_file_list": "a5020c603d4e2b943a4edd42e364fe9e8b974785179bb043c49e3db254d7f503"
+    }
+  }
+}

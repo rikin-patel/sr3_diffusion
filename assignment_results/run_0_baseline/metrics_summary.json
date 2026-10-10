@@ -1,0 +1,16 @@
+{
+  "n_images": 100,
+  "sampling_seconds": 2915.7,
+  "psnr_mean": 22.48744816666191,
+  "psnr_std": 1.891002270411698,
+  "ssim_mean": 0.5722629766787933,
+  "ssim_std": 0.09228286988760473,
+  "lpips_mean": 0.2725129248201847,
+  "lpips_std": 0.06069770130953729,
+  "bicubic_psnr_mean": 23.20843944462617,
+  "bicubic_psnr_std": 1.4990191273546476,
+  "bicubic_ssim_mean": 0.6356046099021645,
+  "bicubic_ssim_std": 0.08580591705129606,
+  "bicubic_lpips_mean": 0.5596163722872735,
+  "bicubic_lpips_std": 0.06464432885074012
+}

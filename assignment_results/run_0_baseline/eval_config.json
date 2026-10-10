@@ -1,0 +1,15 @@
+{
+  "config": "config/kvasir_run0_baseline.json",
+  "checkpoint": "pretrained/sr3_16_128/I640000_E37",
+  "split": "test",
+  "n_images": 100,
+  "batch_size": 25,
+  "seed": 42,
+  "sampling_steps": 2000,
+  "theta_power": 1.0,
+  "alpha_bar_1": 0.9999989867210388,
+  "alpha_bar_T": 4.3859781726496294e-05,
+  "git_commit": "5c989fe309c09a921f86c6bc0a3adb84ee51a1d4",
+  "torch": "2.8.0+cu129",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU"
+}

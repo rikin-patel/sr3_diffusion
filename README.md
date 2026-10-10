@@ -161,7 +161,15 @@ git diff --no-index config/kvasir_runA_original.json config/kvasir_runB_power.js
 
 ### Results
 
-Filled in on each run branch once the run has finished.
+100 Kvasir-SEG test images, 2,000 sampling steps, same starting noise in every run. Mean ± standard
+deviation over the test set. Higher is better for PSNR and SSIM, lower is better for LPIPS.
+
+| Method | PSNR (dB) | SSIM | LPIPS | W&B |
+| --- | --- | --- | --- | --- |
+| Bicubic upsampling (reference) | 23.21 ± 1.50 | 0.636 ± 0.086 | 0.560 ± 0.065 | |
+| Run 0: pretrained, no fine-tuning | 22.49 ± 1.89 | 0.572 ± 0.092 | 0.273 ± 0.061 | [run](https://wandb.ai/rikin-patel-indian-institute-of-technology-jodhpur/FMGAI-Assn/runs/zuwie16r) |
+
+Run A and Run B are filled in on their branches once they have finished.
 
 ---
 
