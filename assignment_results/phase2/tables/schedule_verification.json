@@ -1,0 +1,25 @@
+{
+  "SCHEDULE_EXPONENT_X": 2.5,
+  "Run A": {
+    "config": "config/kvasir_runA_original.json",
+    "checkpoint": "experiments/kvasir_runA_original_261010_160318/checkpoint/I20000_E100_gen.pth",
+    "theta_power_resolved_from_constant": 1.0,
+    "checkpoint_alpha_bar_1": 0.9999989867210388,
+    "checkpoint_alpha_bar_T": 4.3859781726496294e-05,
+    "checkpoint_buffer_bitwise_equal_to_schedule_built_from_constant": true,
+    "checkpoint_matches_native_alpha_bar": true,
+    "checkpoint_matches_alpha_bar_pow_x": false,
+    "max_abs_log_ratio_vs_alpha_bar_pow_x": 15.05176915118895
+  },
+  "Run B": {
+    "config": "config/kvasir_runB_power.json",
+    "checkpoint": "experiments/kvasir_runB_power_261010_194732/checkpoint/I20000_E100_gen.pth",
+    "theta_power_resolved_from_constant": 2.5,
+    "checkpoint_alpha_bar_1": 0.9999974966049194,
+    "checkpoint_alpha_bar_T": 1.273990461736485e-11,
+    "checkpoint_buffer_bitwise_equal_to_schedule_built_from_constant": true,
+    "checkpoint_matches_native_alpha_bar": false,
+    "checkpoint_matches_alpha_bar_pow_x": true,
+    "max_abs_log_ratio_vs_alpha_bar_pow_x": 5.905144107032356e-08
+  }
+}

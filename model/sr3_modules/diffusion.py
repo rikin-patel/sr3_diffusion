@@ -101,21 +101,21 @@ class GaussianDiffusion(nn.Module):
             betas, torch.Tensor) else betas
         alphas = 1. - betas
         alphas_cumprod = np.cumprod(alphas, axis=0)
-        # Power-transformed schedule: theta_t = alphas_cumprod (gamma_t in the SR3 paper).  #ADDED
-        # theta_power = 1.0 keeps the native schedule (Run 0 / Run A); Run B uses x = 2.50.  #ADDED
-        theta_power = schedule_opt['theta_power'] if 'theta_power' in schedule_opt else None  #ADDED
-        theta_power = 1.0 if theta_power is None else float(theta_power)  #ADDED
-        assert np.all((alphas_cumprod > 0.) & (alphas_cumprod < 1.)), \
-            'theta_t = alphas_cumprod must lie strictly in (0, 1)'  #ADDED
-        if theta_power != 1.0:  #ADDED
-            alphas_cumprod = np.power(alphas_cumprod, theta_power)  #ADDED
-            # betas/alphas are re-derived so that every other buffer stays consistent  #ADDED
-            # with the transformed cumulative product.  #ADDED
-            betas = 1. - alphas_cumprod / np.append(1., alphas_cumprod[:-1])  #ADDED
-            alphas = 1. - betas  #ADDED
-            assert np.all((alphas_cumprod > 0.) & (alphas_cumprod < 1.)), \
-                'theta_t ** x left the interval (0, 1)'  #ADDED
-        self.theta_power = theta_power  #ADDED
+        # Power-transformed schedule: theta_t = alphas_cumprod (gamma_t in the SR3 paper).  # ADDED
+        # theta_power = 1.0 keeps the native schedule (Run 0 / Run A); Run B uses x = 2.50.  # ADDED
+        theta_power = schedule_opt['theta_power'] if 'theta_power' in schedule_opt else None  # ADDED
+        theta_power = 1.0 if theta_power is None else float(theta_power)  # ADDED
+        in_unit_interval = np.all((alphas_cumprod > 0.) & (alphas_cumprod < 1.))  # ADDED
+        assert in_unit_interval, 'theta_t = alphas_cumprod must lie strictly in (0, 1)'  # ADDED
+        if theta_power != 1.0:  # ADDED
+            alphas_cumprod = np.power(alphas_cumprod, theta_power)  # ADDED
+            # betas/alphas are re-derived so that every other buffer stays consistent  # ADDED
+            # with the transformed cumulative product.  # ADDED
+            betas = 1. - alphas_cumprod / np.append(1., alphas_cumprod[:-1])  # ADDED
+            alphas = 1. - betas  # ADDED
+            in_unit_interval = np.all((alphas_cumprod > 0.) & (alphas_cumprod < 1.))  # ADDED
+            assert in_unit_interval, 'theta_t ** x left the interval (0, 1)'  # ADDED
+        self.theta_power = theta_power  # ADDED
         alphas_cumprod_prev = np.append(1., alphas_cumprod[:-1])
         self.sqrt_alphas_cumprod_prev = np.sqrt(
             np.append(1., alphas_cumprod))
@@ -212,7 +212,7 @@ class GaussianDiffusion(nn.Module):
         if continous:
             return ret_img
         else:
-            return img  #MODIFIED: was ret_img[-1], which kept only the last image of a batch
+            return img  # MODIFIED: was ret_img[-1], which kept only the last image of a batch
 
     @torch.no_grad()
     def sample(self, batch_size=1, continous=False):

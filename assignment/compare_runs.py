@@ -1,4 +1,4 @@
-#ADDED: new file (FMGAI assignment) - three-run comparison table, paired differences and a visual grid.
+# ADDED: new file (FMGAI assignment) - three-run comparison table, paired differences and a visual grid.
 """Compare Run 0, Run A and Run B on the shared test set.
 
 Writes assignment_results/comparison/ with a summary table (CSV and JSON),

@@ -1,0 +1,30 @@
+{
+  "Bicubic": {
+    "mean_mse": 328.6797434488932,
+    "low_freq_mse": 66.44399243671775,
+    "high_freq_mse": 198.3025762515647,
+    "share_of_mse_from_global_colour_bias": 0.0051848948995366784,
+    "high_freq_energy_ratio_vs_ground_truth": 0.06613999261401317
+  },
+  "Run 0": {
+    "mean_mse": 401.0354420979817,
+    "low_freq_mse": 65.55150741630996,
+    "high_freq_mse": 270.3859252472896,
+    "share_of_mse_from_global_colour_bias": 0.004135102276784506,
+    "high_freq_energy_ratio_vs_ground_truth": 0.7521529731670645
+  },
+  "Run A": {
+    "mean_mse": 290.84126037597656,
+    "low_freq_mse": 46.60439158282916,
+    "high_freq_mse": 206.19370456464523,
+    "share_of_mse_from_global_colour_bias": 0.008821924451212276,
+    "high_freq_energy_ratio_vs_ground_truth": 0.698295505012123
+  },
+  "Run B": {
+    "mean_mse": 336.8527207438151,
+    "low_freq_mse": 59.748712669500364,
+    "high_freq_mse": 231.83343972620082,
+    "share_of_mse_from_global_colour_bias": 0.011284437082287409,
+    "high_freq_energy_ratio_vs_ground_truth": 0.7764595763584122
+  }
+}

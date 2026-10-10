@@ -1,6 +1,6 @@
 # Image Super-Resolution via Iterative Refinement
 
-<!-- #ADDED: FMGAI assignment section (everything up to the "Original README" marker) -->
+<!-- # ADDED: FMGAI assignment section (everything up to the "Original README" marker) -->
 
 ## FMGAI assignment: SR3 on Kvasir-SEG under a power-transformed noise schedule
 
@@ -15,9 +15,17 @@ noise schedules.
 | Run B | `feature/run-b-power-schedule` | fine-tuned 20,000 iterations | ᾱ<sub>t</sub><sup>2.50</sup> | `config/kvasir_runB_power.json` |
 
 The shared code lives on `feature/phase1-setup`. The run branches are stacked on top of it in the order
-Run 0 → Run A → Run B, so `feature/run-b-power-schedule` contains everything.
+Run 0 → Run A → Run B → `feature/phase2-report`, so `feature/phase2-report` contains everything.
 
-The Phase 1 declaration is at `assignment_results/declaration/Phase1_Declaration.pdf`.
+The Phase 1 declaration is at `assignment_results/declaration/Phase1_Declaration.pdf` and the Phase 2 report at
+`assignment_results/phase2/Phase2_Report.pdf`.
+
+**Exponent.** x = 2.50, declared as the named constant `SCHEDULE_EXPONENT_X` at the top of the fine-tuning
+script `sr.py`. A config opts in with `"use_power_schedule": true` (Run B only).
+
+**Random seed.** 42 everywhere: the train / validation / test split, Python, NumPy and PyTorch during
+fine-tuning (`train.seed` in the configs), validation sampling, and test sampling (`--seed 42`, the default of
+`assignment/evaluate.py`).
 
 ### Where things are
 
@@ -33,6 +41,7 @@ The Phase 1 declaration is at `assignment_results/declaration/Phase1_Declaration
 | `assignment_results/run_a_original_schedule/` | Run A fine-tuning logs and curves, outputs, metrics, trajectories |
 | `assignment_results/run_b_power_schedule/` | Run B fine-tuning logs and curves, outputs, metrics, trajectories |
 | `assignment_results/comparison/` | Three-run summary table, paired differences, example grid |
+| `assignment_results/phase2/` | Phase 2 report, fine-tuning loss CSVs, labelled checkpoint samples and inference trajectories, figures, tables |
 | `experiments/` | Raw training folders with checkpoints (not in git) |
 
 Inside each run folder: `test_outputs/sr/` (one PNG per test image), `panels/` (LR, bicubic, SR and ground
@@ -42,23 +51,45 @@ truth side by side), `trajectories/` (reverse-process snapshots), `metrics_per_i
 
 ### Code changes
 
-Every changed line in the original files carries a `#MODIFIED` comment and every new line an `#ADDED`
-comment. New files say `#ADDED: new file` on their first line.
+Every changed line in the original files carries a `# MODIFIED` comment and every new line an `# ADDED`
+comment. New files say `# ADDED: new file` on their first line.
 
 | File | Change |
 | --- | --- |
-| `model/sr3_modules/diffusion.py` | `theta_power` option: raises ᾱ<sub>t</sub> to the power x and re-derives β<sub>t</sub> and the posterior terms; batched sampling returns the whole batch |
+| `model/sr3_modules/diffusion.py` | Schedule exponent: raises ᾱ<sub>t</sub> to the power x and re-derives β<sub>t</sub> and the posterior terms; batched sampling returns the whole batch |
 | `model/model.py` | Rebuilds the schedule from the config after loading a checkpoint (the checkpoint stores schedule buffers); `reset_optimizer` option to fine-tune from weights only; logs the active schedule |
-| `sr.py` | Random seed; validation on batches with a fixed sampling seed; SSIM during validation; iteration logged to W&B |
+| `sr.py` | Named constant `SCHEDULE_EXPONENT_X = 2.50` at the top and `apply_schedule_exponent()`; random seed; validation on batches with a fixed sampling seed; SSIM during validation; iteration logged to W&B |
 | `core/logger.py` | Validation set size during training is configurable (`train.val_data_len`) |
 | `core/wandb_logger.py` | Run name, group and job type passed to W&B |
 | `data/__init__.py` | Validation batch size is configurable |
-| `assignment/*.py` | New: data preparation, schedule analysis, test evaluation, log collection, declaration PDF |
+| `assignment/*.py` | New: data preparation, schedule analysis, test evaluation, log collection, run comparison, Phase 2 deliverables, declaration and report PDFs |
 
 ### Step 0: environment
 
-Tested on Windows 11, Python 3.12, PyTorch 2.8 (CUDA), one RTX 5070 Ti Laptop GPU (12 GB). Commands are run
-from the repository root.
+Software environment used for all runs:
+
+| Component | Version |
+| --- | --- |
+| Operating system | Windows 11 (build 26200) |
+| Python | 3.12.10 |
+| PyTorch | 2.8.0+cu129 (CUDA 12.9, cuDNN 9.10.2) |
+| torchvision | 0.23.0+cu129 |
+| NumPy | 2.5.1 |
+| opencv-python | 5.0.0.93 |
+| Pillow | 12.2.0 |
+| lpips | 0.1.4 |
+| tensorboardX | 2.6.5 |
+| wandb | 0.28.1 |
+| lmdb | 3.0.0 |
+| tqdm | 4.69.1 |
+| matplotlib | 3.11.1 |
+| pandas | 3.0.6 |
+| reportlab | 5.0.1 |
+| gdown | 6.4.2 |
+| GPU | NVIDIA GeForce RTX 5070 Ti Laptop GPU, 12 GB, driver 596.08 |
+
+The same list is written to `assignment_results/phase2/tables/environment.json`. Commands are run from the
+repository root. PyTorch with CUDA was already installed system-wide, so the virtual environment reuses it:
 
 ```bash
 python -m venv .venv --system-site-packages
@@ -154,7 +185,7 @@ python assignment/collect_training_artifacts.py --name kvasir_runB_power --run_d
 python assignment/evaluate.py -c config/kvasir_runB_power.json --checkpoint experiments/kvasir_runB_power_<timestamp>/checkpoint/I20000_E100 --run_dir assignment_results/run_b_power_schedule -enable_wandb
 ```
 
-The two fine-tuning configs differ only in the experiment name and in `theta_power`. To check:
+The two fine-tuning configs differ only in the experiment name and in `use_power_schedule`. To check:
 
 ```bash
 git diff --no-index config/kvasir_runA_original.json config/kvasir_runB_power.json
@@ -167,6 +198,25 @@ Writes the summary table, paired per-image differences and an example grid to `a
 ```bash
 python assignment/compare_runs.py
 ```
+
+### Step 8: Phase 2 deliverables and report
+
+Builds the loss CSVs (`epoch, train_loss`), the labelled checkpoint samples (epochs 20, 40, 60, 80, 100), the
+labelled inference trajectories (t = 1800, 1400, 1000, 600, 200), the figures and tables, all under
+`assignment_results/phase2/`. It reads the recorded runs and the `experiments/` folders; nothing is re-sampled.
+
+```bash
+python assignment/build_phase2_artifacts.py
+```
+
+```bash
+python assignment/build_report.py
+```
+
+Run A and Run B were executed with the exponent written in the config as `"theta_power": 2.5`. It was moved
+into the named constant afterwards; the schedules built by the submitted code are bit-identical to the ones
+stored in both fine-tuned checkpoints (`assignment_results/phase2/tables/phase2_numbers.json`, key
+`verification`).
 
 ### Results
 

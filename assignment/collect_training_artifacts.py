@@ -1,4 +1,4 @@
-#ADDED: new file (FMGAI assignment) - copies a fine-tuning run's logs and curves into assignment_results/.
+# ADDED: new file (FMGAI assignment) - copies a fine-tuning run's logs and curves into assignment_results/.
 """Collect what Phase 2 needs from an experiments/<name>_<timestamp>/ folder.
 
 Copies train.log / val.log and the TensorBoard events, turns the logs into CSV

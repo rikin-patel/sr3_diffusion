@@ -1,4 +1,4 @@
-#ADDED: new file (FMGAI assignment) - test-set evaluation shared by Run 0, Run A and Run B.
+# ADDED: new file (FMGAI assignment) - test-set evaluation shared by Run 0, Run A and Run B.
 """Sample the 100 held-out test images with a given checkpoint and schedule.
 
 For every test image the full reverse process is run (all T steps) starting
@@ -33,6 +33,7 @@ import core.logger as Logger  # noqa: E402
 import core.metrics as Metrics  # noqa: E402
 import model as Model  # noqa: E402
 from data.LRHR_dataset import LRHRDataset  # noqa: E402
+from sr import apply_schedule_exponent  # noqa: E402  (x itself is declared at the top of sr.py)
 
 
 def load_config(path):
@@ -81,7 +82,7 @@ def main():
     parser.add_argument('-enable_wandb', action='store_true')
     args = parser.parse_args()
 
-    opt = load_config(args.config)
+    opt = apply_schedule_exponent(load_config(args.config))
     opt['phase'] = 'val'
     opt['distributed'] = False
     opt['gpu_ids'] = [0]

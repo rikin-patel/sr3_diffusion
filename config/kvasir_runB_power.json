@@ -64,20 +64,20 @@
             "res_blocks": 2,
             "dropout": 0.2
         },
-        "beta_schedule": { // theta_t = alpha_bar_t; theta_power is the exponent x applied to it
+        "beta_schedule": { // theta_t = alpha_bar_t; use_power_schedule applies SCHEDULE_EXPONENT_X from sr.py
             "train": {
                 "schedule": "linear",
                 "n_timestep": 2000,
                 "linear_start": 1e-6,
                 "linear_end": 1e-2,
-                "theta_power": 2.5
+                "use_power_schedule": true
             },
             "val": {
                 "schedule": "linear",
                 "n_timestep": 2000,
                 "linear_start": 1e-6,
                 "linear_end": 1e-2,
-                "theta_power": 2.5
+                "use_power_schedule": true
             }
         },
         "diffusion": {

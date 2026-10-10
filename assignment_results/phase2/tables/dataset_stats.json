@@ -1,0 +1,33 @@
+{
+  "n_images": 1000,
+  "modes": {
+    "RGB": 1000
+  },
+  "distinct_resolutions": 333,
+  "width_min_max": [
+    332,
+    1920
+  ],
+  "height_min_max": [
+    352,
+    1072
+  ],
+  "smallest_image_wxh": [
+    332,
+    487
+  ],
+  "largest_image_wxh": [
+    1920,
+    1072
+  ],
+  "images_smaller_than_128_on_short_side": 0,
+  "split_sizes": {
+    "train": 800,
+    "val": 100,
+    "test": 100
+  },
+  "split_union_is_all_files": true,
+  "split_overlap": 0,
+  "exact_duplicate_file_groups": 0,
+  "duplicate_groups_across_splits": 0
+}

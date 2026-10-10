@@ -1,0 +1,16 @@
+{
+  "run": "Run A",
+  "timesteps": [
+    1800,
+    1400,
+    1000,
+    600,
+    200
+  ],
+  "test_images": [
+    "cju0s690hkp960855tjuaqvv0",
+    "cju15ptjtppz40988odsm9azx",
+    "cju160wshltz10993i1gmqxbe"
+  ],
+  "note": "x_t is the state after the reverse step that produces timestep t; t = 2000 is the initial Gaussian noise and t = 0 the final output."
+}

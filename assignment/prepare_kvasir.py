@@ -1,4 +1,4 @@
-#ADDED: new file (FMGAI assignment) - builds the Kvasir-SEG train/val/test splits for SR3 16 -> 128.
+# ADDED: new file (FMGAI assignment) - builds the Kvasir-SEG train/val/test splits for SR3 16 -> 128.
 """Prepare Kvasir-SEG for 16x16 -> 128x128 super-resolution.
 
 Reads the endoscopy images (the segmentation masks are not used), draws a fixed

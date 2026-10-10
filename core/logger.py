@@ -71,8 +71,8 @@ def parse(args):
 
     # validation in train phase
     if phase == 'train':
-        # was hardcoded to 3; a config can now set train.val_data_len  #MODIFIED
-        opt['datasets']['val']['data_len'] = opt['train'].get('val_data_len', 3)  #MODIFIED
+        # was hardcoded to 3; a config can now set train.val_data_len  # MODIFIED
+        opt['datasets']['val']['data_len'] = opt['train'].get('val_data_len', 3)  # MODIFIED
 
     # W&B Logging
     try:

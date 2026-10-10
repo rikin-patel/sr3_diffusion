@@ -40,11 +40,11 @@ class DDPM(BaseModel):
                 optim_params, lr=opt['train']["optimizer"]["lr"])
             self.log_dict = OrderedDict()
         self.load_network()
-        # The checkpoint stores the schedule buffers of the run that produced it, so  #ADDED
-        # loading overwrites the schedule built from the config. Rebuild it here.  #ADDED
-        self.schedule_phase = None  #ADDED
-        self.set_new_noise_schedule(
-            opt['model']['beta_schedule']['train'], schedule_phase='train')  #ADDED
+        # The checkpoint stores the schedule buffers of the run that produced it, so  # ADDED
+        # loading overwrites the schedule built from the config. Rebuild it here.  # ADDED
+        self.schedule_phase = None  # ADDED
+        self.set_new_noise_schedule(  # ADDED
+            opt['model']['beta_schedule']['train'], schedule_phase='train')  # ADDED
         self.print_network()
 
     def feed_data(self, data):
@@ -96,10 +96,10 @@ class DDPM(BaseModel):
                     schedule_opt, self.device)
             else:
                 self.netG.set_new_noise_schedule(schedule_opt, self.device)
-            net = self.netG.module if isinstance(self.netG, nn.DataParallel) else self.netG  #ADDED
-            logger.info('Noise schedule [{}]: theta_power={:.2f}, T={}, alpha_bar_1={:.9f}, alpha_bar_T={:.6e}'.format(
-                schedule_phase, net.theta_power, net.num_timesteps,
-                net.alphas_cumprod[0].item(), net.alphas_cumprod[-1].item()))  #ADDED
+            net = self.netG.module if isinstance(self.netG, nn.DataParallel) else self.netG  # ADDED
+            logger.info('Noise schedule [{}]: theta_power={:.2f}, T={}, alpha_bar_1={:.9f}, alpha_bar_T={:.6e}'.format(  # ADDED
+                schedule_phase, net.theta_power, net.num_timesteps,  # ADDED
+                net.alphas_cumprod[0].item(), net.alphas_cumprod[-1].item()))  # ADDED
 
     def get_current_log(self):
         return self.log_dict
@@ -167,12 +167,12 @@ class DDPM(BaseModel):
                 gen_path), strict=(not self.opt['model']['finetune_norm']))
             # network.load_state_dict(torch.load(
             #     gen_path), strict=False)
-            # Fine-tuning starts from the pretrained weights only: fresh Adam, step 0.  #ADDED
-            reset_optimizer = bool(self.opt['train'] and self.opt['train']['reset_optimizer'])  #ADDED
-            if reset_optimizer:  #ADDED
-                logger.info('reset_optimizer=True: pretrained weights loaded, '
-                            'optimizer state and step counter are NOT restored.')  #ADDED
-            if self.opt['phase'] == 'train' and not reset_optimizer:  #MODIFIED
+            # Fine-tuning starts from the pretrained weights only: fresh Adam, step 0.  # ADDED
+            reset_optimizer = bool(self.opt['train'] and self.opt['train']['reset_optimizer'])  # ADDED
+            if reset_optimizer:  # ADDED
+                logger.info('reset_optimizer=True: pretrained weights loaded, '  # MODIFIED (re-indented)
+                            'optimizer state and step counter are NOT restored.')  # ADDED
+            if self.opt['phase'] == 'train' and not reset_optimizer:  # MODIFIED
                 # optimizer
                 opt = torch.load(opt_path)
                 self.optG.load_state_dict(opt['optimizer'])

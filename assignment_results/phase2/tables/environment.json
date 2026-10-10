@@ -1,0 +1,23 @@
+{
+  "python": "3.12.10",
+  "os": "Windows-11-10.0.26200-SP0",
+  "torch": "2.8.0+cu129",
+  "torchvision": "0.23.0+cu129",
+  "numpy": "2.5.1",
+  "opencv-python": "5.0.0.93",
+  "Pillow": "12.2.0",
+  "tqdm": "4.69.1",
+  "tensorboardX": "2.6.5",
+  "lmdb": "3.0.0",
+  "wandb": "0.28.1",
+  "lpips": "0.1.4",
+  "matplotlib": "3.11.1",
+  "pandas": "3.0.6",
+  "reportlab": "5.0.1",
+  "gdown": "6.4.2",
+  "scipy": "1.18.0",
+  "cuda_runtime": "12.9",
+  "cudnn": 91002,
+  "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+  "gpu_memory_gb": 11.9
+}

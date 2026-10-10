@@ -131,7 +131,7 @@ dmypy.json
 
 *.lmdb
 
-# --- FMGAI assignment ---  #ADDED
+# --- FMGAI assignment ---  # ADDED
 pretrained/
 *.pth
 kvasir_data/raw/*

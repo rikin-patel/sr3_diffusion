@@ -1,4 +1,4 @@
-#ADDED: new file (FMGAI assignment) - renders the Phase 1 declaration PDF.
+# ADDED: new file (FMGAI assignment) - renders the Phase 1 declaration PDF.
 """Build assignment_results/declaration/Phase1_Declaration.pdf.
 
 The numbers quoted for the schedule are read from
@@ -83,7 +83,7 @@ def main():
     doc = SimpleDocTemplate(os.path.join(OUT_DIR, 'Phase1_Declaration.pdf'), pagesize=A4,
                             leftMargin=2.1 * cm, rightMargin=2.1 * cm, topMargin=1.8 * cm, bottomMargin=1.8 * cm,
                             title='Phase 1 Declaration - Noise schedule study on SR3',
-                            author='[Group members]')
+                            author='Rikin Patel, Anshul, Sonalika Sharma, Balasubramanium M')
     W = A4[0] - 4.2 * cm
     e = []
 
@@ -92,7 +92,7 @@ def main():
                        'under a power-transformed noise schedule', BODY))
     e.append(table([
         ['Group', '[GROUP NUMBER / NAME - to be filled in]'],
-        ['Members', '[MEMBER 1 NAME, ROLL NO.]; [MEMBER 2 NAME, ROLL NO.]; [MEMBER 3 NAME, ROLL NO.]'],
+        ['Members', 'Rikin Patel (M26AI1096); Anshul (M26AI1020); Sonalika Sharma (M26AI1120); Balasubramanium M (M26AI1030)'],
         ['Code repository', link(FORK) + ' (our fork of the public SR3 implementation; '
                             'one feature branch per run)'],
     ], [3.2 * cm, W - 3.2 * cm], header=False))

@@ -17,12 +17,12 @@ class WandbLogger:
 
         # Initialize a W&B run
         if self._wandb.run is None:
-            os.makedirs('./experiments', exist_ok=True)  #ADDED
+            os.makedirs('./experiments', exist_ok=True)  # ADDED
             self._wandb.init(
                 project=opt['wandb']['project'],
-                name=opt['wandb']['run_name'] or opt['name'],  #ADDED
-                group=opt['wandb']['group'],  #ADDED
-                job_type=opt['wandb']['job_type'] or opt['phase'],  #ADDED
+                name=opt['wandb']['run_name'] or opt['name'],  # ADDED
+                group=opt['wandb']['group'],  # ADDED
+                job_type=opt['wandb']['job_type'] or opt['phase'],  # ADDED
                 config=opt,
                 dir='./experiments'
             )

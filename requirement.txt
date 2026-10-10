@@ -9,8 +9,8 @@ pillow
 tensorboardx
 wandb
 
-# --- FMGAI assignment ---  #ADDED
-lpips  #ADDED
-matplotlib  #ADDED
-reportlab  #ADDED
-gdown  #ADDED
+# --- FMGAI assignment ---  # ADDED
+lpips  # ADDED
+matplotlib  # ADDED
+reportlab  # ADDED
+gdown  # ADDED

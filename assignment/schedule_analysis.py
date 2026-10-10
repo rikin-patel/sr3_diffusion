@@ -1,4 +1,4 @@
-#ADDED: new file (FMGAI assignment) - numerical check and plots of the native vs power-transformed schedule.
+# ADDED: new file (FMGAI assignment) - numerical check and plots of the native vs power-transformed schedule.
 """Schedule analysis for theta_t = alpha_bar_t (gamma_t in the SR3 paper).
 
 Builds the schedule through the same code path the model uses, checks that
